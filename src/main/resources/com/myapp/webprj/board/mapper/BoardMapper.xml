@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace에는 Mapper로 사용할 인터페이스의 풀경로이름 -->
+<mapper namespace="com.myapp.webprj.board.mapper.BoardMapper">
+
+    <!--  select를 위한 resultMap  -->
+    <resultMap id="boardMap" type="com.myapp.webprj.board.domain.Board">
+        <result property="regDate" column="regdate"/>
+        <result property="updateDate" column="updatedate"/>
+    </resultMap>
+
+    <!--  글 전체 목록 조회  -->
+    <!--  where절 조건을 넣으면 풀스캔을 안하고 인덱스스캔을 하여 성능 상승  -->
+    <select id="getList" resultMap="boardMap">
+        SELECT * FROM tbl_free_board
+        WHERE bno > 0
+        ORDER BY bno DESC
+    </select>
+
+    <!--  글 상세 조회  -->
+    <select id="findByBno" resultMap="boardMap">
+        SELECT * FROM tbl_free_board
+        WHERE bno = #{bno}
+    </select>
+
+    <!--  글 쓰기 기능  -->
+    <insert id="save">
+        INSERT INTO tbl_free_board
+            (bno, title, content, writer)
+        VALUES (seq_free_board.nextval, #{title}, #{content}, #{writer})
+    </insert>
+
+    <!--  글 수정 기능  -->
+    <update id="update">
+        UPDATE tbl_free_board
+        SET
+            title = #{title},
+            content = #{content},
+            writer = #{writer},
+            updatedate = SYSDATE
+        WHERE bno = #{bno}
+    </update>
+
+    <!--  글 삭제 기능  -->
+    <delete id="delete">
+        DELETE FROM tbl_free_board
+        WHERE bno = #{bno}
+    </delete>
+
+</mapper>
