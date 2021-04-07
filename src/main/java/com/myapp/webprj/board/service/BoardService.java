@@ -2,6 +2,7 @@ package com.myapp.webprj.board.service;
 
 
 import com.myapp.webprj.board.domain.Board;
+import com.myapp.webprj.common.Criteria;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public interface BoardService {
     boolean remove(Long bno);
 
     //게시물 전체 조회 과정
-    List<Board> getList();
+    List<Board> getList(Criteria cri);
+
+    int getTotal();
 
 }
