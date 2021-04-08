@@ -56,6 +56,11 @@
                     </div>
 
 
+                    <!-- form에서 다른 URL로 파라미터를 넘기려면 name 속성을 활용해야 함 -->
+                    <input type="hidden" name="page" value="${pageInfo.page}">
+                    <input type="hidden" name="type" value="${pageInfo.type}">
+                    <input type="hidden" name="keyword" value="${pageInfo.keyword}">
+
 
                     <div class="btn-group">
                         <button type="submit" data-oper='modify' class="btn btn-default">수정</button>
@@ -98,8 +103,6 @@
     });
     
 </script>
-
-
 
 
 

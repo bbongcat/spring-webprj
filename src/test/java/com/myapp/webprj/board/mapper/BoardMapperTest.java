@@ -141,4 +141,16 @@ class BoardMapperTest {
         assertTrue(totalCount == 307);
     }
 
+    @Test
+    @DisplayName("제목으로 검색 수행")
+    void searchByTitleTest() {
+        Criteria cri = new Criteria();
+        cri.setKeyword("28");
+
+        List<Board> list = mapper.getListByTitle(cri);
+        for (Board board : list) {
+            System.out.println(board);
+        }
+    }
+
 }
