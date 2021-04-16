@@ -4,6 +4,7 @@ import com.myapp.webprj.common.Criteria;
 import com.myapp.webprj.reply.domain.Reply;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface ReplyService {
@@ -18,10 +19,10 @@ public interface ReplyService {
     int modify(Reply reply);
 
     //댓글 삭제 서비스
-    int remove(Long rno);
+    int remove(Long bno, Long rno);
 
     //댓글 목록 조회 서비스
-    List<Reply> getList(Long bno, Criteria cri);
+    Map<String, Object> getList(Long bno, Criteria cri);
 
 
 }

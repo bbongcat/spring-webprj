@@ -40,5 +40,6 @@ public interface BoardMapper {
     //글 삭제 기능
     int delete(Long bno);
 
-
+    //게시판 댓글 수 증가
+    void increaseReplyCount(Long bno);
 }

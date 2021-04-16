@@ -10,6 +10,7 @@
     <resultMap id="boardMap" type="com.myapp.webprj.board.domain.Board">
         <result property="regDate" column="regdate"/>
         <result property="updateDate" column="updatedate"/>
+        <result property="replyCnt" column="reply_cnt"/>
     </resultMap>
 
     <!--  글 전체 목록 조회  -->
@@ -24,11 +25,11 @@
     <select id="getListWithPaging" resultMap="boardMap">
         <![CDATA[
           select
-            bno, title, content, writer, regdate, updatedate
+            bno, title, content, writer, regdate, updatedate, REPLY_CNT
           from
               (
               select /*+INDEX_DESC(tbl_free_board pk_free_board) */
-                rownum rn, bno, title, content, writer, regdate, updatedate
+                rownum rn, bno, title, content, writer, regdate, updatedate, REPLY_CNT
               from
                 tbl_free_board
               where rownum <= #{page} * #{amount}
@@ -48,11 +49,11 @@
     <select id="getListByTitle" resultMap="boardMap">
         <![CDATA[
           select
-            bno, title, content, writer, regdate, updatedate
+            bno, title, content, writer, regdate, updatedate, REPLY_CNT
           from
               (
               select /*+INDEX_DESC(tbl_free_board pk_free_board) */
-                rownum rn, bno, title, content, writer, regdate, updatedate
+                rownum rn, bno, title, content, writer, regdate, updatedate, REPLY_CNT
               from
                 tbl_free_board
               where
@@ -76,11 +77,11 @@
     <select id="getSearchList" resultMap="boardMap">
         <![CDATA[
           select
-            bno, title, content, writer, regdate, updatedate
+            bno, title, content, writer, regdate, updatedate, reply_cnt
           from
               (
               select /*+INDEX_DESC(tbl_free_board pk_free_board) */
-                rownum rn, bno, title, content, writer, regdate, updatedate
+                rownum rn, bno, title, content, writer, regdate, updatedate, REPLY_CNT
               from
                 tbl_free_board
               where
@@ -155,5 +156,12 @@
         DELETE FROM tbl_free_board
         WHERE bno = #{bno}
     </delete>
+
+    <!--  댓글 수 증가  -->
+    <update id="increaseReplyCount">
+        update TBL_FREE_BOARD
+        set REPLY_CNT = (select count(*) from TBL_REPLY where bno=#{bno})
+        where BNO = #{bno}
+    </update>
 
 </mapper>

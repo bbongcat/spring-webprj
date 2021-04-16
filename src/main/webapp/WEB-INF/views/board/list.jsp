@@ -41,7 +41,7 @@
 
                             <td>
                                 <a class='move' href="/board/get${pageInfo.makeParam(pageInfo.cri.page)}&bno=${board.bno}">
-                                    ${board.title}
+                                    ${board.title} [${board.replyCnt}]
                                 </a>
                             </td>
 
@@ -80,7 +80,7 @@
 
                         <c:if test="${pageInfo.prev}">
                             <li class="paginate_button previous">
-                                <a href="/board/list?${pageInfo.makeParam(pageInfo.startPage-1)}">이전</a>
+                                <a href="/board/list${pageInfo.makeParam(pageInfo.startPage-1)}">이전</a>
                             </li>
                         </c:if>
 
@@ -92,7 +92,7 @@
 
                         <c:if test="${pageInfo.next}">
                             <li class="paginate_button next">
-                                <a href="/board/list?${pageInfo.makeParam(pageInfo.endPage+1)}">다음</a>
+                                <a href="/board/list${pageInfo.makeParam(pageInfo.endPage+1)}">다음</a>
                             </li>
                         </c:if>
 
