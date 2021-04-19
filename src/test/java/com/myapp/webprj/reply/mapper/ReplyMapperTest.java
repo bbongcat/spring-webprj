@@ -22,7 +22,7 @@ class ReplyMapperTest {
     @Test
     @DisplayName("게시물 번호에 해당하는 20개의 댓글이 정상적으로 삽입되어야 한다.")
     void replyInsertTest() {
-        for (int i = 1; i <= 400; i++) {
+        for (int i = 1; i <= 50; i++) {
             Reply reply = new Reply();
             reply.setBno(14L);
             reply.setReply("14번 게시물 댓글 no" + i);
@@ -30,7 +30,7 @@ class ReplyMapperTest {
 
             replyMapper.insert(reply);
         }
-        assertTrue(replyMapper.getCount(14L) == 400);
+        assertTrue(replyMapper.getCount(14L) == 50);
     }
 
     @Test

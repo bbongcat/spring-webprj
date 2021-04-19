@@ -100,8 +100,8 @@
 </div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+<!-- Reply Modal : 댓글 관련 모달 -->
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -148,6 +148,9 @@
     //원본 글 번호
     let bno = '${board.bno}';
 
+    //현재 댓글 페이지 정보
+    let curPageNum = 1;
+
     //날짜 포맷 변환 함수
     function formatDate(datetime) {
         //문자열 날짜 데이터를 날짜 객체로 변환
@@ -187,7 +190,7 @@
 
     //댓글 페이지 목록을 만들어주는 함수
     function showReplyPage(count) {
-        let pageNum = 1;
+        let pageNum = curPageNum;
         const $pageFooter = document.querySelector('.panel-footer');
 
         //한번에 보여줄 페이지 개수
@@ -212,7 +215,7 @@
         }
 
         for (let i = beginPage; i <= endPage; i++) {
-            let active = pageNum == i ? "active" : '';
+            let active = pageNum === i ? "active" : '';
 
             data += '<li class="page-item ' + active + '"><a class="page-link" href="' + i + '">' + i + "</a></li>";
         }
@@ -223,19 +226,20 @@
         data += '</ul>';
 
         $pageFooter.innerHTML = data;
+
+        //댓글 페이지 클릭 이벤트
+        document.querySelector('ul.pagination').addEventListener('click', e => {
+            if (!e.target.matches('ul.pagination > li > a')) {
+                return;
+            }
+            e.preventDefault();
+            // console.log("페이지 버튼 클릭됨!", e.target.getAttribute('href'));
+
+            curPageNum = e.target.getAttribute('href');
+            showReplyList(curPageNum);
+        });
     }
 
-    //댓글 페이지 클릭 이벤트
-    document.querySelector('ul.pagination').addEventListener('click', e => {
-        if (!e.target.matches('ul.pagination > li > a')) {
-            return;
-        }
-        e.preventDefault();
-        // console.log("페이지 버튼 클릭됨!", e.target.getAttribute('href'));
-
-        const targetPage = e.target.getAttribute('href');
-        showReplyList(targetPage);
-    });
 
     //댓글 목록 DOM을 만드는 함수
     function makeReplyListDOM({replies, count}) {
@@ -272,6 +276,66 @@
                 document.querySelector('.replyCnt').textContent = replyMap.count;
             });
     }
+
+    $(document).ready(function () {
+
+        const $modal = $('#replyModal');
+
+
+        //게시글 등록을 눌렀을 때 모달 팝업을 띄우는 이벤트
+        document.getElementById('addReplyBtn').addEventListener('click', e => {
+
+            //$modal - 모달 전체 노드
+            //find() - 요소에서 자식 노드를 모두 탐색하여 선택자에 맞는 요소를 가져옴
+            $modal.find('input').val('');
+
+            // $modal.find('input[name=replyDate]').parentNode.style.display = none;
+            $modal.find('input[name=replyDate]').parent().hide(); //JQuery에선 위 코드를 아래처럼 줄일 수 있음
+            $modal.find('button[id != modalRegisterBtn]').hide(); //버튼 중 id가 modalRegisterBtn이 아닌 애들을 다 숨겨라
+            $modal.find('#modalCloseBtn').show();
+
+            $modal.modal('show');
+        });
+
+        //모달 close 버튼 이벤트
+        $('#modalCloseBtn').on('click', e => { //JQuery에서는 addEventListener를 on으로 바꿔 씀
+            $modal.modal('hide');
+        });
+
+        //게시물 등록 서버요청 비동기 처리 이벤트
+        $('#modalRegisterBtn').on('click', e => {
+
+            //서버로 전송할 데이터
+            const replyObj = {
+                bno: bno,
+                reply: $('input[name=reply]').val(),
+                replyer: $('input[name=replyer]').val()
+            };
+            console.log(replyObj);
+
+            const reqInfo = {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(replyObj)
+            };
+
+            fetch('/api/v1/replies/', reqInfo)
+                .then(res => res.text())
+                .then(msg => {
+                    if (msg === 'regSuccess') {
+                        $modal.modal('hide');
+                        $modal.find('input').val('');
+                        showReplyList(curPageNum);
+                    } else {
+                        alert('댓글 등록 실패!');
+                    }
+                });
+        });
+
+    }); //JQuery 영역
+
 
     (function () {
 
