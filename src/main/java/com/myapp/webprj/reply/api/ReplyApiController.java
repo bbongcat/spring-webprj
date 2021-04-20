@@ -53,4 +53,34 @@ public class ReplyApiController {
                 new ResponseEntity<>("regSuccess", HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    //댓글 수정
+    //PUT은 전체 수정, PATCH는 부분 수정 가능. PUT은 값을 다 넣어줘야 함
+    //아래처럼 쓰면 PUT, PATCH 둘 다 사용 가능
+    @RequestMapping(value = "/{rno}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    public ResponseEntity<String> modify(
+            @PathVariable Long rno,
+            @RequestBody Reply reply) {
+
+        reply.setRno(rno);
+        log.info("api/v1/replies/" + rno + " PUT: " + reply);
+
+        int modCount = replyService.modify(reply); // 성공하면 1 실패하면 0
+        return modCount == 1
+                ? new ResponseEntity<>("modSuccess", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    //댓글 삭제
+    @DeleteMapping("/{bno}/{rno}")
+    public ResponseEntity<String> delete(@PathVariable Long bno, @PathVariable Long rno) {
+
+        log.info("/api/v1/replies/" + bno + "/" + rno + "DELETE");
+
+        return replyService.remove(bno, rno) == 1
+                ? new ResponseEntity<>("delSuccess", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }
