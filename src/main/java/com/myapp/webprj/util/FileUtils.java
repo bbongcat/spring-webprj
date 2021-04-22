@@ -39,8 +39,10 @@ public class FileUtils {
             e.printStackTrace();
         }
 
+        String resFileName = newUploadPath.substring(uploadPath.length()) + File.separator + newFileName;
 
-        return newFileName;
+        //업로드에 성공하면 해당 파일의 루트패스를 제외한 전체 경로를 리턴
+        return resFileName.replace("\\", "/");
     }
 
     //날짜명으로 폴더 생성
@@ -69,5 +71,11 @@ public class FileUtils {
     //한자리수 월, 일을 항상 2자리로 표현해주는 메서드
     private static String len2(int n) {
         return new DecimalFormat("00").format(n).toString();
+    }
+
+    //2. 파일명에서 확장자를 추출해주는 메서드
+    public static String getFileExtension(String fileName) {
+        //ex) dalldajg-35kjklf5-53467kk-dalgjrijcfk_cat.jpg
+        return fileName.substring(fileName.lastIndexOf(".") + 1); // . 다음글자부터 끝까지
     }
 }
