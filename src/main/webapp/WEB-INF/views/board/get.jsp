@@ -4,6 +4,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="../includes/header.jsp" %>
 
+<style>
+    .fileDrop {
+        width: 800px;
+        height: 400px;
+        border: 1px dashed gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5em;
+    }
+
+    .uploaded-list {
+        display: flex;
+    }
+
+    .img-sizing {
+        display: block;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+
 
 <div class="row">
     <div class="col-lg-12">
@@ -38,10 +60,12 @@
                     <label>Writer</label> <input class="form-control" name='writer' value="${board.writer }" readonly>
                 </div>
 
+                <div class="form-group">
+                    <ul class="uploaded-list"></ul>
+                </div>
 
                 <button id='modify-btn' class="btn btn-default">수정</button>
                 <button id='list-btn' class="btn btn-info">목록</button>
-
 
             </div>
             <!--  end panel-body -->
@@ -370,7 +394,9 @@
 
             const reqInfo = {
                 method: 'PUT',
-                headers: {'content-type': 'application/json'},
+                headers: {
+                    'content-type': 'application/json'
+                },
                 body: JSON.stringify(modDataObj)
             };
 
@@ -408,13 +434,65 @@
                 });
         });
 
+        //이미지 파일인지 확인하는 함수
+        function isImageFile(originFileName) {
+            //정규표현식
+            const pattern = /jpg$|gif$|png$/i;
+            return originFileName.match(pattern);
+        }
+
+        //확장자 판별 후 태그처리 함수
+        function checkExtType(fileName) {
+            console.log('checkExtType! call!');
+
+            let originFileName = fileName.substring(fileName.indexOf("_") + 1);
+
+            //이미지인지 확인
+            if (isImageFile(originFileName)) {
+                originFileName = fileName.substring(fileName.indexOf("_") + 1);
+
+                const $img = document.createElement('img');
+                $img.classList.add('img-sizing');
+                $img.setAttribute('src', '/loadFile?fileName=' + fileName);
+                $img.setAttribute('alt', originFileName);
+                $('.uploaded-list').append($img);
+            } else {
+                //이미지가 아니라면 다운로드 링크를 생성
+                const $link = document.createElement('a');
+                $link.setAttribute('href', '/loadFile?fileName=' + fileName);
+
+                const $img = document.createElement('img');
+                $img.classList.add('img-sizing');
+                $img.setAttribute('src', '/img/file_icon.jpg');
+
+                $link.appendChild($img);
+                $link.innerHTML += '<span>' + originFileName + '</span>'
+                $('.uploaded-list').append($link);
+            }
+        }
+
+        //드롭한 파일의 형식에 따라 태그를 보여주는 함수
+        function showFileData(fileNameList) {
+            for (let fileName of fileNameList) {
+                checkExtType(fileName);
+            }
+        }
+
+        //파일 목록 불러오기
+        function showFileList() {
+            fetch('/board/file/' + bno)
+                .then(res => res.json())
+                .then(fileNameList => {
+                    showFileData(fileNameList);
+                });
+        }
+        showFileList();
+
     }); //JQuery 영역
 
 
     (function () {
-
         showReplyList(1);
-
     }());
 </script>
 
