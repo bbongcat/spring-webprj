@@ -64,7 +64,10 @@
                     <ul class="uploaded-list"></ul>
                 </div>
 
-                <button id='modify-btn' class="btn btn-default">수정</button>
+                <c:if test="${loginUser.name == board.writer || loginUser.auth == 'ADMIN'}">
+                    <button id='modify-btn' class="btn btn-default">수정</button>
+                </c:if>
+
                 <button id='list-btn' class="btn btn-info">목록</button>
 
             </div>
